@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: BoardByREST
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/boarddb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: root1234
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show_sql: true
+    format_sql: true
+
+#  security:
+#    user:
+#      name: user
+#      password: 1234
+
+server:
+  tomcat:
+    threads:
+      max: 5
+      min-spare: 3
+
+logging:
+  level:
+    org:
+      springframework:
+        security: trace
