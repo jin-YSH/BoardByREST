@@ -63,4 +63,14 @@ public class PostService {
         return postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("해당 게시글을 찾을 수 없습니다."));
     }
+
+    // ✅ 제목으로 게시글 검색 (페이징 지원)
+    public Page<Post> searchPosts(String keyword, Pageable pageable) {
+        // TODO: 검색 로직 구현
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return postRepository.findAll(pageable);
+        }
+
+        return postRepository.findByTitleContaining(keyword, pageable);
+    }
 }

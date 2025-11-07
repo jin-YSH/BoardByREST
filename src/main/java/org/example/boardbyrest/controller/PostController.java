@@ -60,4 +60,15 @@ public class PostController {
         Post post = postService.getPost(id);
         return ResponseEntity.ok(PostDto.fromEntity(post));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<Post>> searchPosts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        // TODO: 검색 API 구현
+        Page<Post> result = postService.searchPosts(keyword, PageRequest.of(page, size));
+
+        return ResponseEntity.ok(result);
+    }
 }
