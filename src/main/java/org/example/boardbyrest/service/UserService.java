@@ -3,6 +3,8 @@ package org.example.boardbyrest.service;
 import lombok.RequiredArgsConstructor;
 import org.example.boardbyrest.domain.User;
 import org.example.boardbyrest.dto.UserDto;
+import org.example.boardbyrest.exception.DuplicateUserException;
+import org.example.boardbyrest.exception.UserNotFoundException;
 import org.example.boardbyrest.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
