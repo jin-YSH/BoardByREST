@@ -10,7 +10,9 @@ import org.example.boardbyrest.repository.PostRepository;
 import org.example.boardbyrest.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,11 +48,25 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public void deletePost(Long id) {
-        // TODO: 존재 여부 확인 후 삭제
+    // ✅ 관리자/작성자 권한 확인 후 삭제
+    @Transactional
+    public void deletePost(Long id, User currentUser) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("해당 게시글을 찾을 수 없습니다."));
-        postRepository.delete(post);
+                .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+
+        // ✅ 1️⃣ 관리자 권한 확인
+        boolean isAdmin = currentUser.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        // ✅ 2️⃣ 작성자 본인 확인
+        boolean isOwner = post.getUser().getId().equals(currentUser.getId());
+
+        // ✅ 3️⃣ 둘 다 아니면 삭제 불가
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("게시글 삭제 권한이 없습니다.");
+        }
+
+        postRepository.deleteById(id);
     }
 
     public Page<Post> getPosts(Pageable pageable) {

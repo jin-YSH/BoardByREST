@@ -2,6 +2,7 @@ package org.example.boardbyrest.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.boardbyrest.domain.Post;
+import org.example.boardbyrest.domain.User;
 import org.example.boardbyrest.dto.PostDto;
 import org.example.boardbyrest.service.PostService;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -37,9 +39,9 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long id,@AuthenticationPrincipal User currentUser) {
         // TODO: 게시글 삭제
-        postService.deletePost(id);
+        postService.deletePost(id, currentUser);
         return ResponseEntity.noContent().build();
     }
 

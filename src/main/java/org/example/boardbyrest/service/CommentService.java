@@ -11,11 +11,12 @@ import org.example.boardbyrest.exception.UserNotFoundException;
 import org.example.boardbyrest.repository.CommentRepository;
 import org.example.boardbyrest.repository.PostRepository;
 import org.example.boardbyrest.repository.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -55,13 +56,22 @@ public class CommentService {
                 .toList();
     }
 
-    public void softDeleteComment(Long id) {
-        // TODO: 댓글 찾기
+    // ✅ 관리자 또는 작성자 본인만 soft delete 가능
+    @Transactional
+    public void softDeleteComment(Long id, User currentUser) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException("해당 댓글을 찾을 수 없습니다."));
-        // TODO: del_yn을 true로 설정
+                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+
+        boolean isAdmin = currentUser.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isOwner = comment.getUser().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
+
         comment.setDelYn(true);
-        // TODO: 저장
         commentRepository.save(comment);
     }
 }
