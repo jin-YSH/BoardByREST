@@ -31,7 +31,7 @@ public class Comment {
     @Column(name ="del_yn", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean delYn = false;
 
-    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime regdate;
 
     @ManyToOne(fetch = FetchType.LAZY)
